@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  buddy_up_app:
+   
+    image: buddy_up_app:latest
+    build: 
+      context: ./src/
+      dockerfile: Dockerfile
+    container_name: buddy_up_app
+    ports:
+      - 8080:8080
+
