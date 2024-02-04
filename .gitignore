@@ -1,2 +1,7 @@
 venv/
 *.ini
+*.pyc
+__pycache
+.DS_Store
+.env.*
+.env

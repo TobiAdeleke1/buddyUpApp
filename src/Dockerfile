@@ -1,5 +1,7 @@
 FROM python:3.11.4
 
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONBUFFERED=1 
 
 WORKDIR /app
@@ -8,4 +10,4 @@ RUN pip3 install -r requirements.txt
 
 EXPOSE 8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "main:create_app()", "--log-level", "debug"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "application:create_app()", "--log-level", "debug"]
