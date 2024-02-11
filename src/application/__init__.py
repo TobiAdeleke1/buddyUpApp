@@ -1,5 +1,5 @@
 from flask import Flask
-# from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 # from flask_session import Session
 # from flask_migrate import Migrate
 # from ..config import ProductionConfig, DevelopmentConfig
@@ -8,7 +8,7 @@ from application.config import ProductionConfig, DevelopmentConfig
 
 import os
 
-# db = SQLAlchemy()
+
 # sess = Session() 
 
 
@@ -16,6 +16,8 @@ def create_app():
     ## https://github.com/il-gen/basic_Docker-Flask/blob/main/services/web/project/__init__.py
     app = Flask(__name__, instance_relative_config=True)
     config = os.environ.get('FLASK_ENV')
+    # config = "development"
+
 
     if config=="production":
         app.config.from_object(ProductionConfig)
@@ -26,6 +28,7 @@ def create_app():
   
     else:
         app.logger.info("Flask_ENV is Null !!!")
+   
 
     #############SQLAcademy INIT#############
     ##First init db and create Tables if you want
@@ -50,3 +53,7 @@ def create_app():
         return "Hello World!"
     
     return app
+
+app = create_app()
+db = SQLAlchemy(app)
+

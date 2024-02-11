@@ -9,6 +9,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = (os.environ.get("DATABASE_URL") 
                                or 'sqlite:///'+os.path.join(basedir,'app.db')
                             )
+    print(SQLALCHEMY_DATABASE_URI)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     STATIC_FOLDER = f"{os.getenv('APP_FOLDER')}/project/static"
     MEDIA_FOLDER = f"{os.getenv('APP_FOLDER')}/project/media"   
