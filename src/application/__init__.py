@@ -1,23 +1,14 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-# from flask_session import Session
-# from flask_migrate import Migrate
-# from ..config import ProductionConfig, DevelopmentConfig
-
+from flask_migrate import Migrate
 from application.config import ProductionConfig, DevelopmentConfig
 
 import os
 
-
-# sess = Session() 
-
-
 def create_app():
-    ## https://github.com/il-gen/basic_Docker-Flask/blob/main/services/web/project/__init__.py
     app = Flask(__name__, instance_relative_config=True)
     config = os.environ.get('FLASK_ENV')
-    # config = "development"
-
+    
 
     if config=="production":
         app.config.from_object(ProductionConfig)
@@ -29,31 +20,25 @@ def create_app():
     else:
         app.logger.info("Flask_ENV is Null !!!")
    
-
-    #############SQLAcademy INIT#############
-    ##First init db and create Tables if you want
-    # db.init_app(app)
-
+    
     ############# NOTE: SESSION INIT#############
     
     # sess.init_app(app)
 
-     #############BLUEPRINTS REGISTER#############     
-    
-    # blueprint for non-auth routes of app
-    # from .main import main as main_blueprint
-    # app.register_blueprint(main_blueprint)
+    #############BLUEPRINTS REGISTER#############       
+    from .users import user_api 
+    app.register_blueprint(user_api.bp)
 
-        
-    # # blueprint for auth routes in our app
-    # from .auth import auth as auth_blueprint
-    # app.register_blueprint(auth_blueprint)
+    from .buddy_task import task_api 
+    app.register_blueprint(task_api.bp)  
+ 
     @app.route("/")
-    def hello_world():
-        return "Hello World!"
+    def hello():
+        return render_template("index.html")
     
     return app
 
 app = create_app()
 db = SQLAlchemy(app)
+migrate = Migrate(app,db)
 

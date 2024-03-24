@@ -1,24 +1,30 @@
 from flask.cli import FlaskGroup
 from application import app, db
-from users.models import User
+# from application import app, get_db
 
-# app = create_app()
+from application.users.models import User
+from application.buddy_task.models import Task, BuddyContact
+from datetime import datetime, timedelta
+
 cli = FlaskGroup(app)
 
 
 @cli.command("create_db")
 def create_db():
+
     db.drop_all()
     db.create_all()
     db.session.commit()
-# def create_db():
-#     db.drop_app(app=app)
-#     db.create_all(app=app)
-#     db.session.commit()
+
 @cli.command("seed_db")
 def seed_db():
+
     db.session.add(User("rewTobi", "rewTobi@gmail.com", "preq9004"))
+    # db.session.add(Task(datetime.today() ,"Go Dancing", 1,"Open", datetime.today()+timedelta(days=5) ))
+    db.session.add(Task( "Go Dancing", 1, datetime.today()+timedelta(days=5) ))
     db.session.commit()
+
+
 
 if __name__ == "__main__":
     cli()
