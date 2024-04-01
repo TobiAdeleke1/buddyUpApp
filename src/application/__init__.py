@@ -20,17 +20,6 @@ def create_app():
     else:
         app.logger.info("Flask_ENV is Null !!!")
    
-    
-    ############# NOTE: SESSION INIT#############
-    
-    # sess.init_app(app)
-
-    #############BLUEPRINTS REGISTER#############       
-    from .users import user_api 
-    app.register_blueprint(user_api.bp)
-
-    from .buddy_task import task_api 
-    app.register_blueprint(task_api.bp)  
  
     @app.route("/")
     def hello():
@@ -42,3 +31,9 @@ app = create_app()
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
 
+ #############BLUEPRINTS REGISTER#############       
+from .users import user_api 
+app.register_blueprint(user_api.bp)
+
+from .buddy_task import task_api 
+app.register_blueprint(task_api.bp)  

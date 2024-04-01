@@ -11,11 +11,8 @@ class Config(object):
                                or 
                                'sqlite:////'+os.path.join(basedir,'app.db')
                             )
-    print(SQLALCHEMY_DATABASE_URI)
     SQLALCHEMY_TRACK_MODIFICATIONS = True
-    # STATIC_FOLDER = f"{os.getenv('APP_FOLDER')}/application/templates"
     STATIC_FOLDER = f"{basedir}/templates"
-    # print(os.listdir(STATIC_FOLDER))
     MEDIA_FOLDER = f"{os.getenv('APP_FOLDER')}/project/media"   
 
 class ProductionConfig(Config):
@@ -32,5 +29,4 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     """Testing configuration"""
-
     TESTING = True

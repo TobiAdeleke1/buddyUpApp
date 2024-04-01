@@ -1,7 +1,7 @@
 from application import db 
+
 from datetime import datetime
 import enum
-
 
 class TaskStatus(enum.Enum):
     Open ="Open"
