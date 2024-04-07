@@ -4,12 +4,12 @@ from flask import (
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# @bp.route('/')
-# def index():
+@bp.route('/login')
+def login():
    
-#     return render_template('auth/login.html')
+    return render_template('auth/login.html')
 
 @bp.route('/register')
-def index():
+def register():
     #  return render_template('auth/sign-in.html')
-    return render_template('auth/login.html')
+    return render_template('auth/sign-up.html')
