@@ -11,14 +11,17 @@ class TaskStatus(enum.Enum):
 class Task(db.Model):
     __tablename__ = "tasks"
     id = db.Column(db.Integer, primary_key=True)
+    title= db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     description = db.Column(db.Text, nullable=False)
-    status = db.Column(db.Enum(TaskStatus), default=TaskStatus.Open)
+    # status = db.Column(db.Enum(TaskStatus), default=TaskStatus.Open)
+    status = db.Column(db.Enum(TaskStatus), default="Open")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'),
                         nullable=False)
     due_date = db.Column(db.DateTime, nullable=False)
     
-    def __init__(self,description, user_id,due_date):
+    def __init__(self,title, description, user_id,due_date):
+        self.title = title
         self.description = description
         self.user_id = user_id
         self.due_date = due_date

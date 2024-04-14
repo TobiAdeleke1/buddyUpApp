@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container  ">
+    <h1 class="title text-center">{% block title %} Create New Task {% endblock %} </h1>
+    <form method="post">
+        <p>
+            <label for="tasktitle">Task Category</label>
+            <br/>
+            <input type="text" name="tasktitle" id="tasktitle" required maxlength="100"/> 
+   
+        </p>
+        <p>
+            <label for="buddyemail">Buddy Email</label>
+            <br/>
+            <input type="email" name="buddyemail" id="buddyemail" required>
+        </p>
+        <p>
+            <label for="description">Task Description</label>
+            <br/>
+          
+            <textarea name="description" id="description" required cols="50" rows="8"></textarea>
+   
+        </p>
+        <p>
+            <label for="duedate">Task Due Date</label>
+            <input type="date" name="duedate" id="duedate">
+        </p>
+
+        
+        <p><button type="submit"> Submit</button></p>
+    
+    </form>
+</div>
+
+
+
+
+{% endblock %}

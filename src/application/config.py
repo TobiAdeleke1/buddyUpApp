@@ -23,9 +23,10 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     """Development configuration"""
-    DEBUG = True
+    # DEBUG = True
     TESTNG = True
     LOGIN_DISABLED = False
+    FLASK_DEBUG=1
 
 class TestingConfig(Config):
     """Testing configuration"""

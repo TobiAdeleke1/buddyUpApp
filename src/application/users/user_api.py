@@ -9,7 +9,18 @@ def login():
    
     return render_template('auth/login.html')
 
-@bp.route('/register')
+@bp.route('/register', methods=('GET', 'POST'))
 def register():
-    #  return render_template('auth/sign-in.html')
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('floatingPassword')
+        error = None
+        
+        # TODO complete to add to database
+        if not username:
+            error = 'Username is required.'
+        elif not password: 
+            error = 'Password is required.'
+
     return render_template('auth/sign-up.html')
