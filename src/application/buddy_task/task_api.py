@@ -10,7 +10,6 @@ bp = Blueprint('task', __name__, url_prefix='/task')
 @bp.route('/')
 def index():
     # alltask = db.session.execute(db.select(Task)).all()
-    # alltask = db.session.execute(db.select(Task)).all()
     # or 
     alltasks = Task.query.all()
 
@@ -21,7 +20,8 @@ def user_task():
     """
     Filter the task table by the user id collected from the 
     """
-    pass
+    alltasks = Task.query.all()
+    return render_template('task/tasks.html', tasks=alltasks)
 
 @bp.route('/create', methods=('GET', 'POST'))
 # @login_required
