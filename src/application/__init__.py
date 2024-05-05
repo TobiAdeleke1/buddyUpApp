@@ -3,7 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from application.config import ProductionConfig, DevelopmentConfig
 
+import bcrypt
 import os
+
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -12,6 +14,7 @@ def create_app():
 
     if config=="production":
         app.config.from_object(ProductionConfig)
+        
       
     elif config=="development":
         app.config.from_object(DevelopmentConfig)
@@ -27,13 +30,16 @@ def create_app():
     
     return app
 
+
 app = create_app()
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
-
+JWT_SECRETKEY = bcrypt.hashpw(app.config.get('SECRET_KEY'), bcrypt.gensalt())
  #############BLUEPRINTS REGISTER#############       
 from .users import user_api 
 app.register_blueprint(user_api.bp)
 
 from .buddy_task import task_api 
 app.register_blueprint(task_api.bp)  
+
+
