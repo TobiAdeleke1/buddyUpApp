@@ -1,9 +1,11 @@
 from flask import (
-	Blueprint, flash, redirect, render_template, request, url_for, send_from_directory
+	Blueprint, flash, redirect, render_template,
+    request, url_for, send_from_directory,
+    session
 )
 from application import db
 from .models import Task,BuddyContact
-
+from .controller import TaskController
 
 bp = Blueprint('task', __name__, url_prefix='/task')
 
@@ -16,57 +18,57 @@ def index():
     return render_template('task/tasks.html', tasks=alltasks)
 
 @bp.route('/my-task/<int:user_id>')
-def user_task():
+def user_task(user_id):
     """
     Filter the task table by the user id collected from the 
     """
-    alltasks = Task.query.all()
-    return render_template('task/tasks.html', tasks=alltasks)
+    status, taskresponse = TaskController().findAllTask(user_id)
+    if status:
+        return render_template('task/tasks.html', tasks=taskresponse)
+    
+    return render_template('task/add_task.html')
+
+@bp.route('/task/<int:task_id>', methods=('GET',))
+def get_task(task_id):
+    user_id = session.get('user_id')
+    status, task = TaskController().findTask(task_id, user_id)
+    if status:
+        return render_template('task/tasks.html', tasks=task)
+    
+    return redirect(url_for('task.user_task', user_id=user_id))
+
 
 @bp.route('/create', methods=('GET', 'POST'))
 # @login_required
 def create_task():
     """
-     TODO: Create the method, check permissions, do validation and then commit task
+     TODO : Create the method, check permissions, do validation and then commit task
     """
-    
     if request.method == "POST":
-        task_title = request.form.get('title')
-        task_description  = request.form.get('description')
-        task_duedate = request.form.get('duedate')
-        buddy_email = request.form.get('buddyemail')
-
-        error = None
-
-        if not task_title:
-            error = 'A Title Is Required'
-
-        if not task_duedate:
-            error = "A Due Date is required"
-        
-        if not buddy_email:
-            error = "Need To something a buddy email"
-
-        if error is not None:
-            flash(error)
+        taskresponse = TaskController().addNew()
+        if taskresponse == True:
+            user_id = session.get('user_id')
+            return redirect(url_for('task.user_task', user_id=user_id))
         else:
-            # TODO ADD FORM submitions
-            newtask = Task()
-            newbuddy = BuddyContact()
-            # db.session.add(newtask)
-            # db.session.commit
-             
+            flash(taskresponse)
+           
     return render_template('task/add_task.html')
 
-@bp.route('/update')
-def update_task():
+@bp.route('/edit/<int:task_id>', methods=('GET', 'POST'))
+def update_task(task_id):
     """
     
     """
+    user_id = session.get(user_id)
+    status, response = TaskController().update(task_id)
+    flash(response)
     # newtask = 
-    pass
+    redirect(url_for('task.user_task', user_id=user_id))
 
-@bp.route('/delete')
-def delete_task():
+@bp.route('/delete/<int:task_id>',  methods=('POST',))
+def delete_task(task_id):
     # newtask = 
-    pass
+    user_id = session.get(user_id)
+    status, response = TaskController().delete(task_id)
+    flash(response)
+    redirect(url_for('task.user_task', user_id=user_id)) 
