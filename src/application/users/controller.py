@@ -29,7 +29,7 @@ class UserController:
         email = request.form.get('email')
         password = request.form.get('password')
         error = None
-
+        
     
         if not username:
             error = 'Username is required.'
@@ -56,6 +56,7 @@ class UserController:
     def find(self):
         email = request.form.get('email')
         password = request.form.get('password')
+
         error = None
      
         try: 
@@ -63,14 +64,14 @@ class UserController:
        
         except: 
             error = 'User Not Found'
-
+        
+        
         if user is None:
             error = 'Incorrect Username'
         elif not bcrypt.checkpw(password.encode('utf-8'), user.password):
             error = 'Incorrect Password'
         
         if error is None:
-        
             return (True, user)
         
         return (False, error)

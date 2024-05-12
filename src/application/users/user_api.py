@@ -24,7 +24,7 @@ def register():
     if request.method == 'POST':
 
         userresponse = UserController().addNew()
-        if userresponse:
+        if userresponse == True:
             return redirect(url_for('auth.login')) 
         else:
             flash(userresponse)
@@ -34,6 +34,8 @@ def register():
 def logout():
     session.clear()
     return redirect(url_for('auth.login'))
+
+
    
 @bp.before_app_request
 def load_current_user():
