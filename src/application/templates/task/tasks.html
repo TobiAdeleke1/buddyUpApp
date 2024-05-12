@@ -3,11 +3,13 @@
 
 <div class="container">
     <h1 class="title text-center">{% block title %} TASKS {% endblock %} </h1>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <a class="btn btn-primary" href="{{ url_for('task.create_task') }}" role="button">Create Tasks</a>
+    </div>
     {% for task in tasks %}
        <h2> {{ task.title }}</h2>
        <p> {{ task.description }}  </p>
        
-    
        <p> {{ task.created_at  }}  </p>
        <div>
          <p> Current Status: {{ task.status }}  </p>
