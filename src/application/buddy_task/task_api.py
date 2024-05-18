@@ -1,74 +1,68 @@
 from flask import (
 	Blueprint, flash, redirect, render_template,
-    request, url_for, send_from_directory,
-    session
+    request, url_for, session
 )
-from application import db
-from .models import Task,BuddyContact
-from .controller import TaskController
+
+from application.users.user_api import login_required
+from .controller import TaskController,BuddyContactController
 
 bp = Blueprint('task', __name__, url_prefix='/task')
 
 @bp.route('/')
+@login_required
 def index():
-    # alltask = db.session.execute(db.select(Task)).all()
-    # or 
-    alltasks = Task.query.all()
-
-    return render_template('task/tasks.html', tasks=alltasks)
-
-@bp.route('/my-task/<int:user_id>')
-def user_task(user_id):
-    """
-    Filter the task table by the user id collected from the 
-    """
+    user_id = session.get('user_id')
     status, taskresponse = TaskController().findAllTask(user_id)
     if status:
         return render_template('task/tasks.html', tasks=taskresponse)
-    
     return render_template('task/add_task.html')
 
-@bp.route('/task/<int:task_id>', methods=('GET',))
+
+@bp.route('/<int:task_id>', methods=('GET',))
 def get_task(task_id):
     user_id = session.get('user_id')
     status, task = TaskController().findTask(task_id, user_id)
     if status:
-        return render_template('task/tasks.html', tasks=task)
-    
-    return redirect(url_for('task.user_task', user_id=user_id))
+        return render_template('task/task_detail.html', task=task)
+    return redirect(url_for('task.index'))
 
 
 @bp.route('/create', methods=('GET', 'POST'))
-# @login_required
-def create_task():
-    """
-     TODO : Create the method, check permissions, do validation and then commit task
-    """
+@login_required
+def create_task():   
     if request.method == "POST":
         taskresponse = TaskController().addNew()
         if taskresponse == True:
-            user_id = session.get('user_id')
-            return redirect(url_for('task.user_task', user_id=user_id))
+            return redirect(url_for('task.index'))
         else:
-            flash(taskresponse)
-           
+            flash(taskresponse)        
     return render_template('task/add_task.html')
 
-@bp.route('/edit/<int:task_id>', methods=('GET', 'POST'))
+@bp.route('/<int:task_id>/edit', methods=('GET', 'POST'))
+@login_required
 def update_task(task_id):
-    """
+    taskstatus, taskresponse = TaskController().findTask(task_id, session.get('user_id'))
+    if not taskstatus:
+        flash(taskresponse)
+        return redirect(url_for('task.index')) 
     
-    """
-    user_id = session.get(user_id)
-    status, response = TaskController().update(task_id)
-    flash(response)
-    # newtask = 
-    redirect(url_for('task.user_task', user_id=user_id))
+    if request.method == "POST":
+        _, response = TaskController().update(task_id)
+        flash(response)
+        return redirect(url_for('task.get_task', task_id=task_id))
 
-@bp.route('/delete/<int:task_id>',  methods=('POST',))
+ 
+    _, buddyemail = BuddyContactController().find(taskresponse.id)
+
+
+    # print(taskresponse.buddyemail)
+    return render_template('task/update.html', task_buddy={'task': taskresponse, 'buddy': buddyemail.first_buddy_email })
+
+
+@bp.route('/<int:task_id>/delete',  methods=('POST',))
+@login_required
 def delete_task(task_id):
-    # newtask = 
-    user_id = session.get(user_id)
-    status, response = TaskController().delete(task_id)
+    _, response = TaskController().delete(task_id)
+    TaskController().delete(task_id)
     flash(response)
-    redirect(url_for('task.user_task', user_id=user_id)) 
+    return redirect(url_for('task.index')) 

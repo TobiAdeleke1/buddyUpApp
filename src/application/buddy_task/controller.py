@@ -47,7 +47,7 @@ class TaskController:
             return (False, error)
         return (True, tasks)
 
-    def findTask(self,task_id, user_id):
+    def findTask(self, task_id, user_id):
         try: 
             task = db.session.query(Task).filter(Task.user_id==user_id).filter(Task.id==task_id).first()
         except Exception as err:
@@ -57,36 +57,41 @@ class TaskController:
         return (True, task)
 
     def update(self, task_id):
-        user_id = session.get(user_id)
-        status, taskresponse = self.findTask(task_id,user_id)
+
+        status, taskresponse = self.findTask(task_id,session.get('user_id'))
        
         if status:
             task_title = request.form.get('tasktitle')
             task_description  = request.form.get('description')
             task_duedate = request.form.get('duedate') 
-            buddy_email = request.form.get('buddyemail') # TODO you can not amend for now
+            buddy_email = request.form.get('buddyemail') ## TODO update
            
             taskresponse.title = task_title
-            taskresponse.description = task_description
-            taskresponse.due_date = datetime.fromisoformat(task_duedate)
+            taskresponse.description = task_description.strip()
+            
+            print(task_duedate)
+            if task_duedate:
+                taskresponse.due_date = datetime.fromisoformat(task_duedate)
 
             try:
                 # https://docs.sqlalchemy.org/en/14/orm/tutorial.html#querying-with-joins
-                # task, buddy = db.session.query(Task, BuddyContact).filter(Task.id==task_id).filter(BuddyContact.task_id==)
-                db.session.add(taskresponse)
+    
+                db.session.add(taskresponse)  
                 db.session.commit()
                 taskresponse = "Task was Updated"
+                # buddy = BuddyContactController().find(taskresponse.id)
+                # buddy.first_buddy_email = buddy_email 
+                # db.session.add(buddy)
+                # db.session.commit()
                
             except Exception as err:
                 print(err)
                 status = False
-                taskresponse = "Task was not updated"
-        
-        
+                taskresponse = "Task was not updated"     
         return (status, taskresponse)
         
     def delete(self, task_id):
-        user_id = session.get(user_id) 
+        user_id = session.get('user_id') 
         status, taskresponse = self.findTask(task_id,user_id)
         if status:
             try: 
@@ -128,7 +133,7 @@ class BuddyContactController:
     
     def find(self, task_id):
         try: 
-            buddy = db.session.query(BuddyContact).filter(task_id.id==task_id).first()
+            buddy = db.session.query(BuddyContact).filter(BuddyContact.task_id==task_id).first()
         except Exception as err:
             print(err)
             error = "Buddy Contact Not found"
