@@ -1,10 +1,54 @@
 {% extends 'base.html' %}
 {% block content %}
+
 <div class="container">
-    <h1 class="title text-center">{% block title %} Update Task {% endblock %} </h1>
+    <h1 class="title text-center">{% block title %} Edit Task:  {{ task_buddy.task.title }} {% endblock %} </h1>
     
     
-    <form method="post">
+    <form method="POST">
+        <p>
+            <label for="tasktitle">Task Category</label>
+            <br/>
+            <input type="text"
+             name="tasktitle"
+             value="{{ request.form.get('tasktitle') or task_buddy.task.title }}"
+             id="tasktitle" 
+             required
+             maxlength="100"/> 
+   
+        </p>
+        <p>
+            <label for="buddyemail">Buddy Email</label>
+            <br/>
+            <input 
+             type="email" 
+             name="buddyemail"
+             value="{{ request.form.get('buddyemail') or task_buddy.buddy }}"
+             id="buddyemail" 
+             required/>
+        </p>
+        <p>
+            <label for="description">Task Description</label>
+            <br/>
+            <textarea 
+              name="description"
+              id="description"
+              required cols="50" rows="8">
+                {{ request.form.get('description') or task_buddy.task.description }}
+            </textarea>
+        </p>
+        <p>
+            <label for="duedate">Task Due Date</label>
+            <input
+             type="date" 
+             name="duedate" 
+             value="{{ request.form.get('duedate') or task_buddy.task.due_date }}"
+             id="duedate"/>
+        </p>
+
+        
+        <p><button type="submit"> Submit</button></p>
      
     </form>
 </div>
+{% endblock %} 

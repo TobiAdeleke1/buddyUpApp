@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container">
+    <h1 class="title text-center">{% block title %} TASK {% endblock %} </h1>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <a class="btn btn-primary" href="{{ url_for('task.create_task') }}" role="button">Create Tasks</a>
+    </div>
+     
+    <div class="container">
+    
+       <h2> {{ task.title }}</h2>
+      
+       <p> {{ task.description }}  </p>
+       
+       <p> {{ task.created_at.strftime('%Y-%m-%d')  }}  </p>
+       <div>
+         <p> Current Status: {{ task.status }}  </p>
+         <p> To be completed by:   {{ task.due_date.strftime('%Y-%m-%d') }}  </p>
+       </div>
+
+       {% if g.user.id == task.user_id %}
+        <p> <a class="btn btn-primary"  href="{{ url_for('task.update_task', task_id=task.id) }}">EDIT</a> </p>
+        
+
+        <form action="{{ url_for('task.delete_task', task_id=task.id) }}" method="post">
+            <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete');">
+        </form>
+       {% endif %}
+
+    </div>
+ 
+ 
+</div>
+
+
+{% endblock %} 
