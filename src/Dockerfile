@@ -19,4 +19,6 @@ EXPOSE 8080
 # run entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "application:create_app()", "--log-level", "debug"]
+
+#"--host","172.21.0.3"
+CMD ["python", "manage.py", "run","--host", "172.21.0.3"] 
