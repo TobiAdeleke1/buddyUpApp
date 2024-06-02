@@ -13,7 +13,20 @@ class Config(object):
                             )
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     STATIC_FOLDER = f"{basedir}/templates"
-    MEDIA_FOLDER = f"{os.getenv('APP_FOLDER')}/project/media"   
+    MEDIA_FOLDER = f"{os.getenv('APP_FOLDER')}/project/media" 
+
+    # EMAIL configuration
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_POST=587
+    MAIL_USE_TLS=True 
+    MAIL_USERNAME= os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD=os.environ.get('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER=os.environ.get('MAIL_DEFAULT_SENDER')
+
+    # Celery with Redis Broker
+    CELERY_BROKER_URL='redis://localhost:6379'
+    CELERY_RESULT_BACKEND='redis://localhost:6379'
+
 
 class ProductionConfig(Config):
     """"""

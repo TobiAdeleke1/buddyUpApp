@@ -4,6 +4,7 @@ from flask import (
 )
 
 from application.users.user_api import login_required
+from application.util.background_task import bulk_send_mail
 from .controller import TaskController,BuddyContactController
 
 bp = Blueprint('task', __name__, url_prefix='/task')
@@ -58,6 +59,12 @@ def update_task(task_id):
     # print(taskresponse.buddyemail)
     return render_template('task/update.html', task_buddy={'task': taskresponse, 'buddy': buddyemail.first_buddy_email })
 
+@bp.route('/send_mail')
+def send_mail():
+    """ TODO  improve"""
+    bulk_send_mail()
+
+    return redirect(url_for('task.index')) 
 
 @bp.route('/<int:task_id>/delete',  methods=('POST',))
 @login_required

@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from celery import Celery 
+from flask_mail import Mail
 from application.config import ProductionConfig, DevelopmentConfig
 
 import bcrypt
@@ -34,6 +36,9 @@ def create_app():
 app = create_app()
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
+celery = Celery(app.name, broker=app.config.get('CELERY_BROKER_URL'))
+celery.conf.update(app.config)
+mail = Mail(app)
 JWT_SECRETKEY = bcrypt.hashpw(app.config.get('SECRET_KEY'), bcrypt.gensalt())
  #############BLUEPRINTS REGISTER#############       
 from .users import user_api 
