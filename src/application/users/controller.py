@@ -8,48 +8,51 @@ from application import JWT_SECRETKEY
 from application import db
 from .models import User
 
+
 class LoginController:
-    """ 
+    """
     TODO
      Handles Login, creating access-token, setting cookies, and log-out
     """
-    def login(self):   
+    def login(self):
         # status, userResponse = UserController().find()
         # if status:
         #     session.clear()
-        #     session['user_id'] = userResponse.id 
-        #     return userResponse 
-        # return 
+        #     session['user_id'] = userResponse.id
+        #     return userResponse
+        # return
         pass
+
 
 class UserController:
     def addNew(self):
-       
+
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
         error = None
-        
-    
+
         if not username:
             error = 'Username is required.'
-        elif not password: 
-            error = 'Password is required.'  
-        elif not email: 
+        elif not password:
+            error = 'Password is required.'
+        elif not email:
             error = 'Email is required.'
-     
+
         if error is None:
             try:
                 user = User(
                     username=username,
                     email=email,
-                    password=bcrypt.hashpw(password.encode('utf-8'),bcrypt.gensalt())
+                    password=bcrypt.hashpw(
+                        password.encode('utf-8'),
+                        bcrypt.gensalt()).decode('utf-8')
                 )
                 db.session.add(user)
                 db.session.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registered"
-            else:       
+            else:
                 return True
         return error
 
@@ -58,35 +61,40 @@ class UserController:
         password = request.form.get('password')
 
         error = None
-     
-        try: 
+
+        try:
             user = db.session.query(User).filter(User.email == email).first()
-       
-        except: 
+
+        except Exception as err:
+            print(err)
             error = 'User Not Found'
-        
-        
+
         if user is None:
             error = 'Incorrect Username'
-        elif not bcrypt.checkpw(password.encode('utf-8'), user.password):
+        elif not bcrypt.checkpw(
+                        password.encode('utf-8'),
+                        user.password.encode('utf-8')
+                        ):
             error = 'Incorrect Password'
-        
+
         if error is None:
             return (True, user)
-        
+
         return (False, error)
-    
+
     def findById(self, user_id=None):
         user, error = None, None
- 
-        if user_id :
-            try: 
-                user = db.session.query(User).filter(User.id == user_id).first()
-            except: 
-                error = 'User Not Found'  
- 
+
+        if user_id:
+            try:
+                user = db.session.query(User).filter(
+                     User.id == user_id).first()
+            except Exception as err:
+                print(err)
+                error = 'User Not Found'
+
         if error is None:
-            return (True, user) 
+            return (True, user)
         return (False, error)
 
 
