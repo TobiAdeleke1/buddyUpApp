@@ -1,13 +1,13 @@
 from flask import (
-	Blueprint, flash, redirect, render_template,
+    Blueprint, flash, redirect, render_template,
     request, url_for, session
 )
-
 from application.users.user_api import login_required
 from application.util.background_task import bulk_send_mail
-from .controller import TaskController,BuddyContactController
+from .controller import TaskController, BuddyContactController
 
 bp = Blueprint('task', __name__, url_prefix='/task')
+
 
 @bp.route('/')
 @login_required
@@ -30,41 +30,47 @@ def get_task(task_id):
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
-def create_task():   
+def create_task():
     if request.method == "POST":
         taskresponse = TaskController().addNew()
-        if taskresponse == True:
+        if taskresponse is True:
             return redirect(url_for('task.index'))
         else:
-            flash(taskresponse)        
+            flash(taskresponse)
     return render_template('task/add_task.html')
+
 
 @bp.route('/<int:task_id>/edit', methods=('GET', 'POST'))
 @login_required
 def update_task(task_id):
-    taskstatus, taskresponse = TaskController().findTask(task_id, session.get('user_id'))
+    taskstatus, taskresponse = TaskController().findTask(
+                                            task_id, session.get('user_id'))
     if not taskstatus:
         flash(taskresponse)
-        return redirect(url_for('task.index')) 
-    
+        return redirect(url_for('task.index'))
     if request.method == "POST":
         _, response = TaskController().update(task_id)
         flash(response)
         return redirect(url_for('task.get_task', task_id=task_id))
 
- 
     _, buddyemail = BuddyContactController().find(taskresponse.id)
 
-
     # print(taskresponse.buddyemail)
-    return render_template('task/update.html', task_buddy={'task': taskresponse, 'buddy': buddyemail.first_buddy_email })
+    return render_template('task/update.html',
+                           task_buddy={
+                                'task': taskresponse,
+                                'buddy': buddyemail.first_buddy_email
+                            })
+
 
 @bp.route('/send_mail')
+@login_required
 def send_mail():
     """ TODO  improve"""
     bulk_send_mail()
 
-    return redirect(url_for('task.index')) 
+    return redirect(url_for('task.index'))
+
 
 @bp.route('/<int:task_id>/delete',  methods=('POST',))
 @login_required
@@ -72,4 +78,4 @@ def delete_task(task_id):
     _, response = TaskController().delete(task_id)
     TaskController().delete(task_id)
     flash(response)
-    return redirect(url_for('task.index')) 
+    return redirect(url_for('task.index'))
