@@ -11,16 +11,9 @@ def send_async_mail(**kwargs):
     return msg
 
 
-def get_database(database, table):
-    # tasks = None
-    # try:
-    #     tasks = database.session.query(table).all()
-    # except:
-    #     error = "No Tasks Founds"
-    #     return (False, error)
-
-    tasks = {'subject': 'Buddy Reminder',
-             'sender': 'olutobiadeleke@gmail.com',
-             'buddy': 'tobiaadeleke@gmail.com',
-             'message': '3 day- go Swiming'}
-    return (True, tasks)
+def format_email(task_item, buddy_item):
+    task = {'subject': task_item.title,
+            'sender': 'olutobiadeleke@gmail.com',
+            'buddy': buddy_item.first_buddy_email,
+            'message': task_item.description}
+    return (True, task)

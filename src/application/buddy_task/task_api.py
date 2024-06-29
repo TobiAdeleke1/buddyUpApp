@@ -63,13 +63,19 @@ def update_task(task_id):
                             })
 
 
-@bp.route('/send_mail')
+@bp.route('/<int:task_id>/send_mail')
 @login_required
-def send_mail():
-    """ TODO  improve"""
-    bulk_send_mail()
+def send_mail(task_id):
+    user_id = session.get('user_id')
+    status, taskItem = TaskController().findTask(task_id, user_id)
 
-    return redirect(url_for('task.index'))
+    if status:
+        _, buddyItem = BuddyContactController().find(taskItem.id)
+        email_status = bulk_send_mail(taskItem, buddyItem)
+        if email_status is not None:
+            flash(email_status)
+        flash("Email Sent to your buddy")
+    return redirect(url_for('task.get_task', task_id=taskItem.id))
 
 
 @bp.route('/<int:task_id>/delete',  methods=('POST',))
