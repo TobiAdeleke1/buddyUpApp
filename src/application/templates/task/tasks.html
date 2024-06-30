@@ -6,8 +6,9 @@
     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
       <a class="btn btn-primary" href="{{ url_for('task.create_task') }}" role="button">Create Tasks</a>
     </div>
+    
     {% for task in tasks %}
-       
+       <div class="taskbody">
        <h2> <a  href="{{ url_for('task.get_task', task_id=task.id) }}">{{ task.title }}</a></h2>
        <p> {{ task.description }}  </p>
        
@@ -16,6 +17,7 @@
          <p> Current Status: {{ task.status }}  </p>
          <p> To be completed by:   {{ task.due_date.strftime('%Y-%m-%d') }}  </p>
        </div>
+      </div>
       
      <hr/>  
     {% endfor %}
